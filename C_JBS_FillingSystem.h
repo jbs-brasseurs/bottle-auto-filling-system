@@ -60,14 +60,24 @@ public:
     int8_t GetBtCalPressed(const uint8_t u8_Line) const;
     int8_t GetBtResetPressed() const {return mb_BtReset;};
     int8_t GetBtPedalePressed() const {return mb_BtPedale;};
+
 protected:
+    bool CheckBottlesEmtyAndReady(const uint8_t u8_UsedLine) const;
+
 private:
 	C_JBS_FillingSystem( const C_JBS_FillingSystem &c );
 	C_JBS_FillingSystem& operator=( const C_JBS_FillingSystem &c );
 
   int16_t mu16_CyclePeriodMS;
-  int16_t mu16_CleaningCounter;
+  int16_t mu16_FillingCounter;
+  int16_t mu16_ClickingCounter;
+  int16_t mu16_FilledBottleCounter;
+  int16_t mu16_FillingCalibrationTicks;
+  int16_t mu16_FillingTicks;
+
   int16_t mu16_CleaningState;
+  int16_t mu16_FillingState;
+  int8_t mu8_NumberOfUsedLines;
 
     //bool CleaningOperation(uint8_t u8_Line, uint32_t u32_Time, uint32_t& ru32_Timekeeper);
     

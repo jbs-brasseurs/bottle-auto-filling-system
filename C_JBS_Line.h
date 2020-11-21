@@ -43,9 +43,7 @@ bool mb_BtCalLast;
 bool mb_BtCalClick; 
 
 bool mb_Ct;
-//bool mb_CtLast;
-
-bool mb_BottleTaken;
+bool mb_BottleEmpty;
 
 EN_LedColor men_AI_Color;
 EN_LedColor men_SI_Color;
@@ -70,6 +68,13 @@ public:
     void WriteOutput();
     
     bool GetBtCal() const {return mb_BtCal;}
+    bool GetBtCalClick() const {return mb_BtCalClick;}
+    bool GetBtCalLast() const {return mb_BtCalLast;}
+
+    bool GetBottleCt() const {return mb_Ct;}
+    bool GetBottleEmtyAndReady() const {return !mb_Ct && mb_BottleEmpty;}
+    void SetBottleFull();
+
     bool GetV() const {return mb_V;}
     
 protected:

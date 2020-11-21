@@ -17,6 +17,7 @@ const uint8_t U8_JBS_LED_NEO_PIXEL_NUMBER_LED {16U};	//{8U}; // Number of used l
 const uint32_t U32_JBS_RED_LED {Adafruit_NeoPixel::Color(0xFFU,0X00U,0x00U,0xFFU)};
 const uint32_t U32_JBS_GREEN_LED {Adafruit_NeoPixel::Color(0x00U,0X20U,0x00U,0x10U)};
 const uint32_t U32_JBS_ORANGE_LED {Adafruit_NeoPixel::Color(0x80U,0X40U,0x00U,0xFFU)};
+const uint32_t U32_JBS_BLUE_LED {Adafruit_NeoPixel::Color(0x00U,0X00U,0x40U,0xFFU)};
 const uint32_t U32_JBS_OFF_LED {Adafruit_NeoPixel::Color(0x00U,0X00U,0x00U,0x00U)};
 
 const uint32_t AU32_JBS_ColorMap[7] {U32_JBS_OFF_LED, U32_JBS_GREEN_LED, U32_JBS_GREEN_LED, U32_JBS_ORANGE_LED, U32_JBS_ORANGE_LED, U32_JBS_RED_LED, U32_JBS_RED_LED};

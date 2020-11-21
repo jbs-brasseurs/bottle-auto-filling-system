@@ -33,12 +33,9 @@ C_JBS_FillingSystem g_FillingSystem;
 void setup() {
   // put your setup code here, to run once:
     g_Lcd.Init();                      // initialize the LCD
-    //g_Lcd.write(8u);
     g_Lcd.ClearPrint(g_Lcd.MAC8_INIT);
-    //g_Lcd.write(8u);
   
     g_Leds.init();
-    //g_Leds.setPixelColor(0, g_Leds.Color(0u, 0u, 255u));
     g_Leds.show();   // Send the updated pixel colors to the hardware.
 
     Serial.begin(115200);
@@ -64,7 +61,7 @@ void setup() {
 
     //Input
     g_FillingSystem.UpdateInput();
-    
+
     if (g_FillingSystem.GetBtResetPressed() ==0)
     {
       g_FillingSystem.Reset();
@@ -109,21 +106,10 @@ void setup() {
     else if (gu8_Mode == 1U)
     {      
       g_FillingSystem.Manual();
-      char ac8_Line[U8_JBS_LCD_I2C_NUMBER_COL];
-      //sprinf(ac8_Line, "%d", g_FillingSystem.GetBtCalPressed(1U));
-      //sprinf(ac8_Line+4, "%d", g_FillingSystem.GetBtCalPressed(2U));
-      //sprinf(ac8_Line+8, "%d", g_FillingSystem.GetBtCalPressed(3U));
-      //sprinf(ac8_Line+12, "%d", g_FillingSystem.GetBtCalPressed(4U))
-      g_Lcd.ClearPrint2("Manual 1", ac8_Line);
       g_FillingSystem.WriteOutput();
     }
     else if (gu8_Mode == 4U)
     {      
-      g_Lcd.ClearPrint2("Cleaning 4", String(g_FillingSystem.GetBtPedalePressed()).c_str());
-      if (g_FillingSystem.GetBtPedalePressed() == 0U)
-      {
-          g_Lcd.ClearPrint2("Cleaning 4", "Active");
-      }
       g_FillingSystem.Cleaning();
       g_FillingSystem.WriteOutput();
     }

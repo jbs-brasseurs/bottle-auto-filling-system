@@ -18,8 +18,7 @@ C_JBS_Line::C_JBS_Line():
     mb_BtCalLast{1u},
     mb_BtCalClick{0u},
     mb_Ct{1u},
-    //mb_CtLast{1u},
-    mb_BottleTaken{1u},
+    mb_BottleEmpty{1u},
     men_AI_Color{E_LedColor_None},
     men_SI_Color{E_LedColor_None}
 {
@@ -53,7 +52,7 @@ void C_JBS_Line::Reset()
     mb_Ct = 1u;
     //mb_CtLast = 1u;
 
-    mb_BottleTaken = 1u;
+    mb_BottleEmpty = 1u;
     men_AI_Color = E_LedColor_None;
     men_SI_Color = E_LedColor_None;
 }
@@ -72,7 +71,7 @@ void C_JBS_Line::UpdateInput()
     }
     
     mb_Ct = digitalRead(mu8_CtPin);
-    mb_BottleTaken |= mb_Ct;
+    mb_BottleEmpty |= mb_Ct;
 }
 
 
@@ -115,4 +114,9 @@ void C_JBS_Line::SetValve(const bool b_Valve)
 void C_JBS_Line::WriteOutput()
 {
     digitalWrite(mu8_ValvePin, mb_V);
+}
+
+void C_JBS_Line::SetBottleFull()
+{
+    mb_BottleEmpty = false;
 }

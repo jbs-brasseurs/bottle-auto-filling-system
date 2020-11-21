@@ -101,7 +101,88 @@ void C_JBS_FillingSystem::Manual()
 
 void C_JBS_FillingSystem::SemiAuto()
 {
-    
+
+  if (m_Lines[3].GetBtCalClick() && CheckBottlesEmtyAndReady(4))
+  {
+    //Callib 4
+    mu8_NumberOfUsedLines = 4;
+    mu16_FillingState = 2;
+    mu16_ClickingCounter = 0;
+    mu16_FillingTicks = mu16_FillingCalibrationTicks + (mu16_FilledBottleCounter/5); // Calibrate ticks to add for lower perssue
+
+  }
+  else if(mu8_NumberOfUsedLines == 4 && m_Lines[3].GetBtCal() == 0)
+  {
+    mu16_ClickingCounter++;
+  }
+  else if( mu16_ClickingCounter > 3000/mu16_CyclePeriodMS)
+  {
+    mu16_FillingState = 2;
+    if(m_Lines[3].GetBtCal() == 1 && m_Lines[3].GetBtCalLast() == 0)
+    {
+      mu16_FillingState = 0;
+      mu16_FilledBottleCounter = 0;
+      mu16_FillingCalibrationTicks = mu16_ClickingCounter;
+    }
+  }
+
+
+    if (mu16_FillingState == 1)
+    {
+      for(uint8_t u8_I{0U}; u8_I < mu8_NumberOfUsedLines; u8_I++)
+      {
+        m_Lines[u8_I].SetValve(true);
+      }
+    }
+    else if (mu16_FillingState == 2)
+    {
+      if (mu16_FillingCounter>=mu16_FillingTicks)
+      { 
+        //Serial.println("Valve Closed ");
+        mu16_FillingCounter=0;
+        mu16_FillingState=0;
+        for(uint8_t u8_I{0U}; u8_I < mu8_NumberOfUsedLines; u8_I++)
+        {
+          m_Lines[u8_I].SetValve(false);
+          m_Lines[u8_I].SetBottleFull();
+        }
+        
+        mu16_FilledBottleCounter+=mu8_NumberOfUsedLines;
+        //Serial.print("Number of filled bottles: ");
+        //Serial.println(NumberFilledBottle);
+      }
+      else
+      {
+        mu16_FillingCounter++;
+        for(uint8_t u8_I{0U}; u8_I < mu8_NumberOfUsedLines; u8_I++)
+        {
+          m_Lines[u8_I].SetValve(true);
+        }
+      }
+      
+      
+    }
+    else
+    {
+      for(uint8_t u8_I{0U}; u8_I < mu8_NumberOfUsedLines; u8_I++)
+      {
+         m_Lines[u8_I].SetValve(false);
+      }
+    }
+
+
+}
+
+bool C_JBS_FillingSystem::CheckBottlesEmtyAndReady(const uint8_t u8_UsedLine) const
+{
+  bool b_Result{true};
+
+  for(uint8_t u8_I{0U}; u8_I < u8_UsedLine; u8_I++)
+  {
+    b_Result &= m_Lines[u8_I].GetBottleEmtyAndReady();
+  }
+
+  return b_Result;
 }
 
 void C_JBS_FillingSystem::Cleaning()
@@ -109,7 +190,7 @@ void C_JBS_FillingSystem::Cleaning()
     if(mb_BtPedaleClick)
     {
       mb_CleaningActive ^= mb_BtPedaleClick;
-      mu16_CleaningCounter = 0U;
+      mu16_FillingCounter = 0U;
       mu16_CleaningState = 0U;
       g_Lcd.ClearPrintL2("1X 2X 3X 4X");
       mp_Leds->setPixelColor(0,U32_JBS_GREEN_LED);
@@ -130,10 +211,10 @@ void C_JBS_FillingSystem::Cleaning()
         m_Lines[0].SetValve(1);
         g_Lcd.ClearPrintL2("1O 2X 3X 4X 1/10");
         mp_Leds->setPixelColor(1,U32_JBS_ORANGE_LED);
-        if (mu16_CleaningCounter >= 5000/mu16_CyclePeriodMS)
+        if (mu16_FillingCounter >= 5000/mu16_CyclePeriodMS)
         {
           mu16_CleaningState++;
-          mu16_CleaningCounter = 0U;
+          mu16_FillingCounter = 0U;
         }
       }
       else if (mu16_CleaningState == 1U)
@@ -141,10 +222,10 @@ void C_JBS_FillingSystem::Cleaning()
         m_Lines[0].SetValve(0);       
         g_Lcd.ClearPrintL2("1X 2X 3X 4X 2/10");
         mp_Leds->setPixelColor(1,U32_JBS_OFF_LED);
-        if (mu16_CleaningCounter >= 5000/mu16_CyclePeriodMS)
+        if (mu16_FillingCounter >= 5000/mu16_CyclePeriodMS)
         {
           mu16_CleaningState++;
-          mu16_CleaningCounter = 0U;
+          mu16_FillingCounter = 0U;
         }
       }
       else if (mu16_CleaningState == 2U)
@@ -152,10 +233,10 @@ void C_JBS_FillingSystem::Cleaning()
         m_Lines[1].SetValve(1);
         g_Lcd.ClearPrintL2("1X 2O 3X 4X 3/10");
         mp_Leds->setPixelColor(3,U32_JBS_ORANGE_LED);
-        if (mu16_CleaningCounter >= 5000/mu16_CyclePeriodMS)
+        if (mu16_FillingCounter >= 5000/mu16_CyclePeriodMS)
         {
           mu16_CleaningState++;
-          mu16_CleaningCounter = 0U;
+          mu16_FillingCounter = 0U;
         }
       }      
       else if (mu16_CleaningState == 3U)
@@ -163,10 +244,10 @@ void C_JBS_FillingSystem::Cleaning()
         m_Lines[1].SetValve(0);
         g_Lcd.ClearPrintL2("1X 2X 3X 4X  4/10");
         mp_Leds->setPixelColor(3,U32_JBS_OFF_LED);
-        if (mu16_CleaningCounter >= 5000/mu16_CyclePeriodMS)
+        if (mu16_FillingCounter >= 5000/mu16_CyclePeriodMS)
         {
           mu16_CleaningState++;
-          mu16_CleaningCounter = 0U;
+          mu16_FillingCounter = 0U;
         }
       }
       else if (mu16_CleaningState == 4U)
@@ -174,10 +255,10 @@ void C_JBS_FillingSystem::Cleaning()
         m_Lines[2].SetValve(1);
         g_Lcd.ClearPrintL2("1X 2X 3O 4X 5/10");
         mp_Leds->setPixelColor(5,U32_JBS_ORANGE_LED);
-        if (mu16_CleaningCounter >= 5000/mu16_CyclePeriodMS)
+        if (mu16_FillingCounter >= 5000/mu16_CyclePeriodMS)
         {
           mu16_CleaningState++;
-          mu16_CleaningCounter = 0U;
+          mu16_FillingCounter = 0U;
         }
       }      
       else if (mu16_CleaningState == 5U)
@@ -185,10 +266,10 @@ void C_JBS_FillingSystem::Cleaning()
         m_Lines[2].SetValve(0);
         g_Lcd.ClearPrintL2("1X 2X 3X 4X 6/10");
         mp_Leds->setPixelColor(5,U32_JBS_OFF_LED);
-        if (mu16_CleaningCounter >= 5000/mu16_CyclePeriodMS)
+        if (mu16_FillingCounter >= 5000/mu16_CyclePeriodMS)
         {
           mu16_CleaningState++;
-          mu16_CleaningCounter = 0U;
+          mu16_FillingCounter = 0U;
         }
       }
       else if (mu16_CleaningState == 6U)
@@ -196,10 +277,10 @@ void C_JBS_FillingSystem::Cleaning()
         m_Lines[3].SetValve(1);
         g_Lcd.ClearPrintL2("1X 2X 3X 4O 7/10");
         mp_Leds->setPixelColor(7,U32_JBS_ORANGE_LED);
-        if (mu16_CleaningCounter >= 5000/mu16_CyclePeriodMS)
+        if (mu16_FillingCounter >= 5000/mu16_CyclePeriodMS)
         {
           mu16_CleaningState++;
-          mu16_CleaningCounter = 0U;
+          mu16_FillingCounter = 0U;
         }
       }      
       else if (mu16_CleaningState == 7U)
@@ -207,10 +288,10 @@ void C_JBS_FillingSystem::Cleaning()
         m_Lines[3].SetValve(0);
         g_Lcd.ClearPrintL2("1X 2X 3X 4X 8/10");
         mp_Leds->setPixelColor(7,U32_JBS_OFF_LED);
-        if (mu16_CleaningCounter >= 5000/mu16_CyclePeriodMS)
+        if (mu16_FillingCounter >= 5000/mu16_CyclePeriodMS)
         {
           mu16_CleaningState++;
-          mu16_CleaningCounter = 0U;
+          mu16_FillingCounter = 0U;
         }
       }
       else if (mu16_CleaningState == 8U)
@@ -225,10 +306,10 @@ void C_JBS_FillingSystem::Cleaning()
         mp_Leds->setPixelColor(7,U32_JBS_ORANGE_LED);
 
         g_Lcd.ClearPrintL2("1O 2O 3O 4O 9/10");
-        if (mu16_CleaningCounter >= 5000/mu16_CyclePeriodMS)
+        if (mu16_FillingCounter >= 5000/mu16_CyclePeriodMS)
         {
           mu16_CleaningState++;
-          mu16_CleaningCounter = 0U;
+          mu16_FillingCounter = 0U;
         }
       }      
       else if (mu16_CleaningState == 9U)
@@ -242,13 +323,13 @@ void C_JBS_FillingSystem::Cleaning()
         mp_Leds->setPixelColor(5,U32_JBS_OFF_LED);
         mp_Leds->setPixelColor(7,U32_JBS_OFF_LED);
         g_Lcd.ClearPrintL2("1X 2X 3X 4X10/10");
-        if (mu16_CleaningCounter >= 5000/mu16_CyclePeriodMS)
+        if (mu16_FillingCounter >= 5000/mu16_CyclePeriodMS)
         {
           mu16_CleaningState++;
-          mu16_CleaningCounter = 0U;
+          mu16_FillingCounter = 0U;
         }
       }
-      mu16_CleaningCounter++;
+      mu16_FillingCounter++;
     }
     else
     {
