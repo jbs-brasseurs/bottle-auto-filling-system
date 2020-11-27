@@ -118,5 +118,5 @@ void C_JBS_Line::WriteOutput()
 
 void C_JBS_Line::SetBottleFull()
 {
-    mb_BottleEmpty = false;
+    mb_BottleEmpty = 0u;
 }

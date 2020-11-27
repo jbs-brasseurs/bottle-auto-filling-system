@@ -68,16 +68,18 @@ private:
 	C_JBS_FillingSystem( const C_JBS_FillingSystem &c );
 	C_JBS_FillingSystem& operator=( const C_JBS_FillingSystem &c );
 
-  int16_t mu16_CyclePeriodMS;
-  int16_t mu16_FillingCounter;
-  int16_t mu16_ClickingCounter;
-  int16_t mu16_FilledBottleCounter;
-  int16_t mu16_FillingCalibrationTicks;
-  int16_t mu16_FillingTicks;
+  uint16_t mu16_CyclePeriodMS;
+  uint16_t mu16_FillingCounter;
+  uint16_t mu16_ClickingCounter;
+  uint16_t mu16_FilledBottleCounter;
+  uint16_t mu16_FillingCalibrationTicks;
+  uint16_t mu16_FillingTicks;
 
-  int16_t mu16_CleaningState;
-  int16_t mu16_FillingState;
-  int8_t mu8_NumberOfUsedLines;
+  uint16_t mu16_CleaningState;
+  uint16_t mu16_FillingState;
+  uint8_t mu8_NumberOfUsedLines;
+  
+  uint8_t mu8_CalibratedLine;
 
     //bool CleaningOperation(uint8_t u8_Line, uint32_t u32_Time, uint32_t& ru32_Timekeeper);
     
