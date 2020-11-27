@@ -13,10 +13,25 @@
 C_JBS_LCD_I2C::C_JBS_LCD_I2C():
 LiquidCrystal_I2C(0x27u, U8_JBS_LCD_I2C_NUMBER_COL, U8_JBS_LCD_I2C_NUMBER_ROW),
 mau8_BierCharacter{0x06,0x09,0x19,0x19,0x19,0x19,0x0F,0x00},
-MAC8_INIT{"Init ..."},
-MAC8_INIT_JBS{"Have fun with   JBS systems"},
-MAC8_INIT_STARTUP{"Startup ..."},
 
+MAC8_INIT{" Initialisation "},
+MAC8_INIT_ABOUT{"V1.0-2020-11-27 Made in JBS"},
+MAC8_INIT_JBS_MESSAGE{"Bon courage     Bon remplissage "},
+MAC8_INIT_STARTUP{"Startup ..."},
+MAC8_BEER{8,0},
+MAC8_BEER_L2_01{8,0},
+MAC8_BEER_L2_01_03{8,' ',8,0},
+MAC8_BEER_L2_01_03_05{8,' ',8,' ',8,0},
+MAC8_BEER_L2_01_03_05_07{8,' ',8,' ',8,' ',8,0},
+MAC8_BEER_L2_01_03_05_07_09{8,' ',8,' ',8,' ',8,' ',8,0},
+MAC8_BEER_L2_01_03_05_07_09_11{8,' ',8,' ',8,' ',8,' ',8,' ',8,0},
+MAC8_BEER_L2_01_03_05_07_09_11_13{8,' ',8,' ',8,' ',8,' ',8,' ',8,' ',8,0},
+MAC8_BEER_L2_01_03_05_07_09_11_13_15{8,' ',8,' ',8,' ',8,' ',8,' ',8,' ',8,' ',8,0},
+MAC8_MODE_00{"1:M|2:SA|3:A|4:C"},
+MAC8_MODE_01{"Manuel"},
+MAC8_MODE_02{"Semi-Automatique"},
+MAC8_MODE_03{"Automatique"},
+MAC8_MODE_04{"Nettoyage"},
 MAC8_MODE_CHOOSE{"Choose mode:"}
 {
 } //JBS_LCD_I2C
@@ -110,13 +125,13 @@ void C_JBS_LCD_I2C::ClearPrintDebug(const char * pc8_Line1, const int u16_V1, co
     print(ac8_Line);
 }
 
-void C_JBS_LCD_I2C::PrintInit()
-{
-    vTaskDelay( 5000u / portTICK_PERIOD_MS ); // wait for one second
-
-    ClearPrint(MAC8_INIT_JBS);
-    vTaskDelay( 10000u / portTICK_PERIOD_MS ); // wait for one second
-    
-    ClearPrint(MAC8_INIT_STARTUP);
-    vTaskDelay( 3000u / portTICK_PERIOD_MS ); // wait for one second
-}
+//void C_JBS_LCD_I2C::PrintInit()
+//{
+//    vTaskDelay( 5000u / portTICK_PERIOD_MS ); // wait for one second
+//
+//    ClearPrint(MAC8_INIT_JBS_MESSAGE);
+//    vTaskDelay( 10000u / portTICK_PERIOD_MS ); // wait for one second
+//    
+//    ClearPrint(MAC8_INIT_STARTUP);
+//    vTaskDelay( 3000u / portTICK_PERIOD_MS ); // wait for one second
+//}

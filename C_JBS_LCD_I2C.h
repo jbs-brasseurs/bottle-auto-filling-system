@@ -18,11 +18,26 @@ class C_JBS_LCD_I2C : public LiquidCrystal_I2C
 {
 //variables
 public:
-const char MAC8_INIT[9];
-const char MAC8_INIT_JBS[32];
+const char MAC8_INIT[16];
+const char MAC8_INIT_ABOUT[32];
+const char MAC8_INIT_JBS_MESSAGE[32];
 const char MAC8_INIT_STARTUP[32];
+const char MAC8_BEER[2];
+const char MAC8_BEER_L2_01[2];
+const char MAC8_BEER_L2_01_03[4];
+const char MAC8_BEER_L2_01_03_05[6];
+const char MAC8_BEER_L2_01_03_05_07[8];
+const char MAC8_BEER_L2_01_03_05_07_09[10];
+const char MAC8_BEER_L2_01_03_05_07_09_11[12];
+const char MAC8_BEER_L2_01_03_05_07_09_11_13[14];
+const char MAC8_BEER_L2_01_03_05_07_09_11_13_15[16];
 
 const char MAC8_MODE_CHOOSE[32];
+const char MAC8_MODE_00[32];
+const char MAC8_MODE_01[32];
+const char MAC8_MODE_02[32];
+const char MAC8_MODE_03[32];
+const char MAC8_MODE_04[32];
 
 protected:
 
