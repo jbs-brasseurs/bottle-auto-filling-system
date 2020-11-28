@@ -10,9 +10,12 @@
 
 #include <Arduino_FreeRTOS.h>
 #include <LiquidCrystal_I2C.h>
+#include "C_JBS_LedNeoPixel.h"
 
 const uint8_t U8_JBS_LCD_I2C_NUMBER_ROW {2u};
 const uint8_t U8_JBS_LCD_I2C_NUMBER_COL {16u};
+
+extern C_JBS_LedNeoPixel g_Leds;
 
 class C_JBS_LCD_I2C : public LiquidCrystal_I2C
 {

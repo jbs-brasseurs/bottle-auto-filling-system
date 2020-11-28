@@ -52,7 +52,7 @@ public:
     
     void Manual();
     void SemiAuto();
-    void Auto() {}
+    void Auto();
     void Cleaning();
     
     void WriteOutput();

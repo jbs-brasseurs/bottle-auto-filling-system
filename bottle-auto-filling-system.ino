@@ -24,7 +24,7 @@ uint8_t gu8_Mode{0u};
 //   2 Semi-Auto mode - Filling starts by pressing the pedal  
 //   3 Auto - Filling start automatically when bottle is present
 //   4 Cleaning - Used to clean all 4 valves
-const uint16_t g_CYCLE_TIME_MS {100U};
+const uint16_t g_CYCLE_TIME_MS {20U};
 unsigned int gMachineMode{1U};   // number of used valve
 unsigned int gu32TimingFilling{20U}; // 20 ms cycle time
 
@@ -50,98 +50,13 @@ void setup() {
   g_Lcd.ClearPrint(g_Lcd.MAC8_INIT);  // Init message
   
   Serial.println("Init phase 02 : Start carroussel"); // Message used to debug
-  // Display leds and displas carroussel 
-  g_Lcd.ClearPrintL2(g_Lcd.MAC8_BEER_L2_01);
-  g_Leds.setPixelColor(0,0,0,255);
-  g_Leds.show();
-  Delay(1000);
-  
-  g_Leds.init();
-  g_Lcd.ClearPrintL2(g_Lcd.MAC8_BEER_L2_01_03);
-  g_Leds.setPixelColor(2,0,0,255);
-  g_Leds.show();
-  Delay(1000);
-
-  g_Leds.init();
-  g_Lcd.ClearPrintL2(g_Lcd.MAC8_BEER_L2_01_03_05);
-  g_Leds.setPixelColor(4,0,0,255);
-  g_Leds.show();
-  Delay(1000);
-
-  g_Leds.init();
-  g_Lcd.ClearPrintL2(g_Lcd.MAC8_BEER_L2_01_03_05_07);
-  g_Leds.setPixelColor(6,0,0,255);
-  g_Leds.show();
-  Delay(1000);
-
-  g_Lcd.ClearPrintL2(g_Lcd.MAC8_BEER_L2_01_03_05_07_09);
-  g_Leds.setPixelColor(7,0,0,255);
-  g_Leds.show();
-  Delay(1000);
-  
-  g_Leds.init();
-  g_Lcd.ClearPrintL2(g_Lcd.MAC8_BEER_L2_01_03_05_07_09_11);
-  g_Leds.setPixelColor(5,0,0,255);
-  g_Leds.show();
-  Delay(1000);
-
-  g_Leds.init();
-  g_Lcd.ClearPrintL2(g_Lcd.MAC8_BEER_L2_01_03_05_07_09_11_13);
-  g_Leds.setPixelColor(3,0,0,255);
-  g_Leds.show();
-  Delay(1000);
-
-  g_Leds.init();
-  g_Lcd.ClearPrintL2(g_Lcd.MAC8_BEER_L2_01_03_05_07_09_11_13_15);
-  g_Leds.setPixelColor(1,0,0,255);
-  g_Leds.show();
-  Delay(1000);
-
-
-  Serial.println("Init phase 03 : Start About"); // Message used to debug
-  // About message
-  g_Lcd.ClearPrint(g_Lcd.MAC8_INIT_ABOUT);  // Init message
-  g_Leds.init();
-  g_Leds.setPixelColor(0,0,0,255);
-  g_Leds.setPixelColor(2,0,0,255);
-  g_Leds.setPixelColor(4,0,0,255);
-  g_Leds.setPixelColor(6,0,0,255);
-  g_Leds.setPixelColor(7,0,0,255);
-  g_Leds.setPixelColor(5,0,0,255);
-  g_Leds.setPixelColor(3,0,0,255);
-  g_Leds.setPixelColor(1,0,0,255);
-  g_Leds.show();
-  Delay(4000);
-
-  Serial.println("Init phase 04 : Start Welcome"); // Message used to debug
-  // Welcome message
-  g_Lcd.ClearPrint(g_Lcd.MAC8_INIT_JBS_MESSAGE);  // Init message
-  g_Leds.init();
-  g_Leds.setPixelColor(0,U32_JBS_GREEN_LED);
-  g_Leds.setPixelColor(1,U32_JBS_GREEN_LED);
-  g_Leds.show();
-  Delay(1000);
-
-  g_Leds.setPixelColor(2,U32_JBS_GREEN_LED);
-  g_Leds.setPixelColor(3,U32_JBS_GREEN_LED);
-  g_Leds.show();
-  Delay(1000);
-
-  g_Leds.setPixelColor(4,U32_JBS_GREEN_LED);
-  g_Leds.setPixelColor(5,U32_JBS_GREEN_LED);
-  g_Leds.show();
-  Delay(1000);
-
-  g_Leds.setPixelColor(6,U32_JBS_GREEN_LED);
-  g_Leds.setPixelColor(7,U32_JBS_GREEN_LED);
-  g_Leds.show();
-  Delay(1000);
+  g_Lcd.PrintInit();
   
   // Initialize filling system object
-  Serial.println("Init phase 05 : System start"); // Message used to debug
+  Serial.println("Init phase 03 : System start"); // Message used to debug
   g_FillingSystem.Init(g_CYCLE_TIME_MS, U8_PIN_BT_RESET, U8_PIN_BT_PEDALE, AU8_PIN_V, AU8_PIN_BT_CAL, AU8_PIN_CT, &g_Leds);
 
-  Serial.println("Init phase 06 : ??"); // Message used to debug
+  Serial.println("Init phase 04 : ??"); // Message used to debug
   uint32_t u32_LoopTime{0U};       
   uint8_t u8_Last_Mode{0xffU};
   
@@ -152,7 +67,7 @@ void setup() {
     g_FillingSystem.UpdateInput();
     
     // Detect reset btn
-    if (g_FillingSystem.GetBtResetPressed() == 0U)
+    if (g_FillingSystem.GetBtResetPressed() == 0U && gu8_Mode > 0U)
     {
       g_FillingSystem.Reset();
       gu8_Mode = 0U;
@@ -163,34 +78,60 @@ void setup() {
     {
       if (gu8_Mode == 0U)
       {
-        g_Lcd.ClearPrint(g_Lcd.MAC8_MODE_CHOOSE);
+        g_Lcd.ClearPrint2(g_Lcd.MAC8_MODE_CHOOSE, g_Lcd.MAC8_MODE_00);
+        g_Leds.setPixelColor(0U, U32_JBS_PINK_LED);
+        g_Leds.setPixelColor(1U, U32_JBS_PINK_LED);
+        g_Leds.setPixelColor(2U, U32_JBS_PINK_LED);
+        g_Leds.setPixelColor(3U, U32_JBS_PINK_LED);
+        g_Leds.setPixelColor(4U, U32_JBS_PINK_LED);
+        g_Leds.setPixelColor(5U, U32_JBS_PINK_LED);
+        g_Leds.setPixelColor(6U, U32_JBS_PINK_LED);
+        g_Leds.setPixelColor(7U, U32_JBS_PINK_LED);
+        g_Leds.show();
       }
       
       else if (gu8_Mode == 1U)
       {
-        g_Lcd.ClearPrint("Manual 1");
+        g_Lcd.ClearPrint(g_Lcd.MAC8_MODE_01);
         g_Leds.setPixelColor(0U, U32_JBS_GREEN_LED);
         g_Leds.setPixelColor(2U, U32_JBS_GREEN_LED);
         g_Leds.setPixelColor(4U, U32_JBS_GREEN_LED);
         g_Leds.setPixelColor(6U, U32_JBS_GREEN_LED);
+        g_Leds.show();
+        delay(2000U);
       }
       
       else if (gu8_Mode == 2U)
       {
-        g_Lcd.ClearPrint("Semi Auto 2");
+        g_Lcd.ClearPrint(g_Lcd.MAC8_MODE_02);
         g_Leds.setPixelColor(0U, U32_JBS_ORANGE_LED);
         g_Leds.setPixelColor(2U, U32_JBS_ORANGE_LED);
         g_Leds.setPixelColor(4U, U32_JBS_ORANGE_LED);
         g_Leds.setPixelColor(6U, U32_JBS_ORANGE_LED);
+        g_Leds.show();
       }
 
       else if (gu8_Mode == 3U)
       {
-        g_Lcd.ClearPrint("Auto 3");
+        g_Lcd.ClearPrint(g_Lcd.MAC8_MODE_03);
+        g_Leds.setPixelColor(0U, U32_JBS_ORANGE_LED);
+        g_Leds.setPixelColor(2U, U32_JBS_ORANGE_LED);
+        g_Leds.setPixelColor(4U, U32_JBS_ORANGE_LED);
+        g_Leds.setPixelColor(6U, U32_JBS_ORANGE_LED);
+        g_Leds.show();
       }
       else if (gu8_Mode == 4U)
       {
-        g_Lcd.ClearPrint("Cleaning 4");
+        g_Lcd.ClearPrint(g_Lcd.MAC8_MODE_04);
+        g_Leds.setPixelColor(0U, U32_JBS_GREEN_LED);
+        g_Leds.setPixelColor(2U, U32_JBS_GREEN_LED);
+        g_Leds.setPixelColor(4U, U32_JBS_GREEN_LED);
+        g_Leds.setPixelColor(6U, U32_JBS_GREEN_LED);
+        g_Leds.setPixelColor(1U, U32_JBS_OFF_LED);
+        g_Leds.setPixelColor(3U, U32_JBS_OFF_LED);
+        g_Leds.setPixelColor(5U, U32_JBS_OFF_LED);
+        g_Leds.setPixelColor(7U, U32_JBS_OFF_LED);
+        g_Leds.show();
       }
       
       u8_Last_Mode = gu8_Mode;
@@ -210,6 +151,11 @@ void setup() {
       g_FillingSystem.SemiAuto();
       g_FillingSystem.WriteOutput();
     }
+    else if (gu8_Mode == 3U)
+    {      
+      g_FillingSystem.Auto();
+      g_FillingSystem.WriteOutput();
+    }
     else if (gu8_Mode == 4U)
     {      
       g_FillingSystem.Cleaning();
@@ -225,7 +171,6 @@ void MainMenuHandling()
 {
   if(g_FillingSystem.GetBtCalPressed(1U)==0)
       {
-        g_Lcd.ClearPrint("Mode 1");
         gu8_Mode = 1U;
       }
       else if(g_FillingSystem.GetBtCalPressed(2U)==0)

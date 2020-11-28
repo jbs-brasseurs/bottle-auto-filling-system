@@ -27,12 +27,12 @@ MAC8_BEER_L2_01_03_05_07_09{8,' ',8,' ',8,' ',8,' ',8,0},
 MAC8_BEER_L2_01_03_05_07_09_11{8,' ',8,' ',8,' ',8,' ',8,' ',8,0},
 MAC8_BEER_L2_01_03_05_07_09_11_13{8,' ',8,' ',8,' ',8,' ',8,' ',8,' ',8,0},
 MAC8_BEER_L2_01_03_05_07_09_11_13_15{8,' ',8,' ',8,' ',8,' ',8,' ',8,' ',8,' ',8,0},
-MAC8_MODE_00{"1:M|2:SA|3:A|4:C"},
+MAC8_MODE_00{"1:M|2:SA|3:A|4:N"},
 MAC8_MODE_01{"Manuel"},
 MAC8_MODE_02{"Semi-Automatique"},
 MAC8_MODE_03{"Automatique"},
 MAC8_MODE_04{"Nettoyage"},
-MAC8_MODE_CHOOSE{"Choose mode:"}
+MAC8_MODE_CHOOSE{"Choix du mode:"}
 {
 } //JBS_LCD_I2C
 
@@ -125,13 +125,90 @@ void C_JBS_LCD_I2C::ClearPrintDebug(const char * pc8_Line1, const int u16_V1, co
     print(ac8_Line);
 }
 
-//void C_JBS_LCD_I2C::PrintInit()
-//{
-//    vTaskDelay( 5000u / portTICK_PERIOD_MS ); // wait for one second
-//
-//    ClearPrint(MAC8_INIT_JBS_MESSAGE);
-//    vTaskDelay( 10000u / portTICK_PERIOD_MS ); // wait for one second
-//    
-//    ClearPrint(MAC8_INIT_STARTUP);
-//    vTaskDelay( 3000u / portTICK_PERIOD_MS ); // wait for one second
-//}
+void C_JBS_LCD_I2C::PrintInit()
+{
+  // Display leds and displas carroussel 
+  ClearPrintL2(MAC8_BEER_L2_01);
+  g_Leds.setPixelColor(0,0,0,255);
+  g_Leds.show();
+  delay(1000);
+  
+  g_Leds.init();
+  ClearPrintL2(MAC8_BEER_L2_01_03);
+  g_Leds.setPixelColor(2,0,0,255);
+  g_Leds.show();
+  delay(1000);
+
+  g_Leds.init();
+  ClearPrintL2(MAC8_BEER_L2_01_03_05);
+  g_Leds.setPixelColor(4,0,0,255);
+  g_Leds.show();
+  delay(1000);
+
+  g_Leds.init();
+  ClearPrintL2(MAC8_BEER_L2_01_03_05_07);
+  g_Leds.setPixelColor(6,0,0,255);
+  g_Leds.show();
+  delay(1000);
+
+  g_Leds.init();
+  ClearPrintL2(MAC8_BEER_L2_01_03_05_07_09);
+  g_Leds.setPixelColor(7,0,0,255);
+  g_Leds.show();
+  delay(1000);
+  
+  g_Leds.init();
+  ClearPrintL2(MAC8_BEER_L2_01_03_05_07_09_11);
+  g_Leds.setPixelColor(5,0,0,255);
+  g_Leds.show();
+  delay(1000);
+
+  g_Leds.init();
+  ClearPrintL2(MAC8_BEER_L2_01_03_05_07_09_11_13);
+  g_Leds.setPixelColor(3,0,0,255);
+  g_Leds.show();
+  delay(1000);
+
+  g_Leds.init();
+  ClearPrintL2(MAC8_BEER_L2_01_03_05_07_09_11_13_15);
+  g_Leds.setPixelColor(1,0,0,255);
+  g_Leds.show();
+  delay(1000);
+
+  // About message
+  ClearPrint(MAC8_INIT_ABOUT);  // Init message
+  g_Leds.init();
+  g_Leds.setPixelColor(0,0,0,255);
+  g_Leds.setPixelColor(2,0,0,255);
+  g_Leds.setPixelColor(4,0,0,255);
+  g_Leds.setPixelColor(6,0,0,255);
+  g_Leds.setPixelColor(7,0,0,255);
+  g_Leds.setPixelColor(5,0,0,255);
+  g_Leds.setPixelColor(3,0,0,255);
+  g_Leds.setPixelColor(1,0,0,255);
+  g_Leds.show();
+  delay(4000);
+
+  // Welcome message
+  ClearPrint(MAC8_INIT_JBS_MESSAGE);  // Init message
+  g_Leds.init();
+  g_Leds.setPixelColor(0,U32_JBS_GREEN_LED);
+  g_Leds.setPixelColor(1,U32_JBS_GREEN_LED);
+  g_Leds.show();
+  delay(1000);
+
+  g_Leds.setPixelColor(2,U32_JBS_GREEN_LED);
+  g_Leds.setPixelColor(3,U32_JBS_GREEN_LED);
+  g_Leds.show();
+  delay(1000);
+
+  g_Leds.setPixelColor(4,U32_JBS_GREEN_LED);
+  g_Leds.setPixelColor(5,U32_JBS_GREEN_LED);
+  g_Leds.show();
+  delay(1000);
+
+  g_Leds.setPixelColor(6,U32_JBS_GREEN_LED);
+  g_Leds.setPixelColor(7,U32_JBS_GREEN_LED);
+  g_Leds.show();
+  delay(1000);
+}
