@@ -49,8 +49,8 @@ void setup() {
   g_Lcd.Init();   // Initialize the LCD
   g_Lcd.ClearPrint(g_Lcd.MAC8_INIT);  // Init message
   
-  Serial.println("Init phase 02 : Start carroussel"); // Message used to debug
-  g_Lcd.PrintInit();
+  //Serial.println("Init phase 02 : Start carroussel"); // Message used to debug
+  //g_Lcd.PrintInit();
   
   // Initialize filling system object
   Serial.println("Init phase 03 : System start"); // Message used to debug
@@ -98,7 +98,7 @@ void setup() {
         g_Leds.setPixelColor(4U, U32_JBS_GREEN_LED);
         g_Leds.setPixelColor(6U, U32_JBS_GREEN_LED);
         g_Leds.show();
-        delay(2000U);
+        delay(500U);
       }
       
       else if (gu8_Mode == 2U)

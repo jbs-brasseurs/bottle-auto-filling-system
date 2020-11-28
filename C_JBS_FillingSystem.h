@@ -13,6 +13,7 @@
 #include "C_JBS_LCD_I2C.h"
 #include "C_JBS_LedNeoPixel.h"
 #include "C_JBS_Line.h"
+#include "string.h"
 
 #define JBS_NUMBER_LINES 4
 
@@ -77,10 +78,10 @@ private:
 
   uint16_t mu16_CleaningState;
   uint16_t mu16_FillingState;
-  uint8_t mu8_NumberOfUsedLines;
-  
-  uint8_t mu8_CalibratedLine;
 
+  uint8_t mu8_NumberOfUsedLines;
+  uint8_t mu8_CalibratedLine;
+  
     //bool CleaningOperation(uint8_t u8_Line, uint32_t u32_Time, uint32_t& ru32_Timekeeper);
     
 }; //C_JBS_FillingSystem
