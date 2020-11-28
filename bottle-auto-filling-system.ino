@@ -56,7 +56,7 @@ void setup() {
   Serial.println("Init phase 03 : System start"); // Message used to debug
   g_FillingSystem.Init(g_CYCLE_TIME_MS, U8_PIN_BT_RESET, U8_PIN_BT_PEDALE, AU8_PIN_V, AU8_PIN_BT_CAL, AU8_PIN_CT, &g_Leds);
 
-  Serial.println("Init phase 04 : ??"); // Message used to debug
+  Serial.println("Init phase 04 : Prepare state machine"); // Message used to debug
   uint32_t u32_LoopTime{0U};       
   uint8_t u8_Last_Mode{0xffU};
   
