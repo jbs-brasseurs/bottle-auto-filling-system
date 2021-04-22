@@ -59,6 +59,8 @@ public:
     
     void WriteOutput();
     
+    void SelectLine();
+
     int8_t GetBtCalPressed(const uint8_t u8_Line) const;
     int8_t GetBtResetPressed() const {return mb_BtReset;};
     int8_t GetBtPedalePressed() const {return mb_BtPedale;};
@@ -80,7 +82,7 @@ private:
   uint16_t mu16_CleaningState;
   uint16_t mu16_FillingState;
 
-  uint8_t mu8_NumberOfUsedLines;
+  uint8_t mu8_UsedLineIndex;
   uint8_t mu8_CalibratedLine;
   
     //bool CleaningOperation(uint8_t u8_Line, uint32_t u32_Time, uint32_t& ru32_Timekeeper);

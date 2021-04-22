@@ -55,7 +55,7 @@ void C_JBS_FillingSystem::Reset()
     g_Leds.init();
 
     mb_CleaningActive = 0u;
-    mu8_NumberOfUsedLines = 0U;
+    mu8_UsedLineIndex = 0U;
     mu16_FillingCalibrationTicks = 0U; 
     mu8_CalibratedLine = 0U;
     WriteOutput();
@@ -114,16 +114,16 @@ void C_JBS_FillingSystem::Manual()
       } 
       mu8_CalibratedLine=0U;
     }
-    if (mu8_NumberOfUsedLines != mu8_CalibratedLine)
+    if (mu8_UsedLineIndex != mu8_CalibratedLine)
     {
-      mu8_NumberOfUsedLines = mu8_CalibratedLine;
+      mu8_UsedLineIndex = mu8_CalibratedLine;
       mu16_FillingCounter=0U;
     }
 }
 
 void C_JBS_FillingSystem::SemiAuto()
 {
-  if (mu8_NumberOfUsedLines>0U && mu16_FillingCalibrationTicks>0U && mb_BtPedaleClick && CheckBottlesEmtyAndReady(mu8_NumberOfUsedLines))
+  if (mu8_UsedLineIndex>0U && mu16_FillingCalibrationTicks>0U && mb_BtPedaleClick && CheckBottlesEmtyAndReady(mu8_UsedLineIndex))
   {
 
     mu16_FillingTicks = mu16_FillingCalibrationTicks + (mu16_FilledBottleCounter/5U); // Calibrate ticks to add for lower perssue
@@ -131,26 +131,23 @@ void C_JBS_FillingSystem::SemiAuto()
     mu16_FillingState = 1U;
   }
 
-  if (mu16_FillingState == 1U)
+  if (mu16_FillingState == 1U && mu8_UsedLineIndex > 0U)
   {
-    if (mu16_FillingCounter>=mu16_FillingTicks || !CheckBottlesEmtyAndReady(mu8_NumberOfUsedLines))
+    if (mu16_FillingCounter>=mu16_FillingTicks || !CheckBottlesEmtyAndReady(mu8_UsedLineIndex))
     { 
       mu16_FillingCounter=0U;
       mu16_FillingState=0U;
-      for(uint8_t u8_I{0U}; u8_I < mu8_NumberOfUsedLines; u8_I++)
-      {
-        m_Lines[u8_I].SetValve(false);
-        m_Lines[u8_I].SetBottleFull();
-      }
-      mu16_FilledBottleCounter+=mu8_NumberOfUsedLines;
+
+      m_Lines[mu8_UsedLineIndex-1U].SetValve(false);
+      m_Lines[mu8_UsedLineIndex-1U].SetBottleFull();
+
+      mu16_FilledBottleCounter++;
     }
     else
     {
       mu16_FillingCounter++;
-      for(uint8_t u8_I{0U}; u8_I < mu8_NumberOfUsedLines; u8_I++)
-      {
-        m_Lines[u8_I].SetValve(true);
-      }
+
+      m_Lines[mu8_UsedLineIndex-1U].SetValve(true);
     }
   }
   else
@@ -158,17 +155,16 @@ void C_JBS_FillingSystem::SemiAuto()
     // Calibration
     if (mu8_CalibratedLine>0U)                            // IF calibatration active
     {
-      if(!CheckBottlesEmtyAndReady(mu8_CalibratedLine))      // IF button click release
+      if(!CheckBottlesEmtyAndReady(mu8_CalibratedLine) && mu8_UsedLineIndex > 0U)      // IF button click release
       {
-        for(uint8_t u8_I{0U}; u8_I < mu8_NumberOfUsedLines; u8_I++)
-        {
-          m_Lines[u8_I].SetBottleFull();
-          mu16_FilledBottleCounter+=mu8_NumberOfUsedLines;
-          m_Lines[u8_I].SetValve(false);
-        }
+
+        m_Lines[mu8_UsedLineIndex-1U].SetBottleFull();
+        mu16_FilledBottleCounter++;
+        m_Lines[mu8_UsedLineIndex-1U].SetValve(false);
+
         mu8_CalibratedLine = 0U;                              // Reset Calibrated line
         mu16_ClickingCounter = 0U;                            // Reset Click counter
-        mu8_NumberOfUsedLines = 0U;
+        mu8_UsedLineIndex = 0U;
       }
       else
       {
@@ -179,14 +175,12 @@ void C_JBS_FillingSystem::SemiAuto()
             mu16_FilledBottleCounter = 0U;
             mu16_FillingCalibrationTicks = mu16_ClickingCounter - U32_JBS_CALIBRATION_START_PAUSE_MS/mu16_CyclePeriodMS;
             Serial.println("Used Line:");
-            Serial.println(mu8_NumberOfUsedLines);
+            Serial.println(mu8_UsedLineIndex);
             Serial.println("Calibration ticks:");
             Serial.println(mu16_FillingCalibrationTicks);
-            for(uint8_t u8_I{0U}; u8_I < mu8_NumberOfUsedLines; u8_I++)
-            {
-              m_Lines[u8_I].SetBottleFull();
-              mu16_FilledBottleCounter+=mu8_NumberOfUsedLines;
-            }
+
+            m_Lines[mu8_UsedLineIndex-1U].SetBottleFull();
+            mu16_FilledBottleCounter++;
           }
           else
           {
@@ -195,10 +189,8 @@ void C_JBS_FillingSystem::SemiAuto()
           mu8_CalibratedLine = 0U;                              // Reset Calibrated line
           mu16_ClickingCounter = 0U ;                           // Reset Click counter
           mu16_FillingState = 0U;
-          for(uint8_t u8_I{0U}; u8_I < mu8_NumberOfUsedLines; u8_I++)
-          {
-            m_Lines[u8_I].SetValve(false);
-          }
+
+          m_Lines[mu8_UsedLineIndex-1U].SetValve(false);
         }
         else
         {
@@ -223,17 +215,15 @@ void C_JBS_FillingSystem::SemiAuto()
 
     if (mu8_CalibratedLine > 0U && mu16_ClickingCounter >= U32_JBS_CALIBRATION_START_PAUSE_MS/mu16_CyclePeriodMS)
     {
-      mu8_NumberOfUsedLines = mu8_CalibratedLine;
-      for(uint8_t u8_I{0U}; u8_I < mu8_NumberOfUsedLines; u8_I++)
-      {
-        m_Lines[u8_I].SetValve(true);
-      }
+      mu8_UsedLineIndex = mu8_CalibratedLine;
+
+      m_Lines[mu8_UsedLineIndex-1U].SetValve(true);
     }
     else
     {
       for(uint8_t u8_I{0U}; u8_I < U8_JBS_NUMBER_LINES; u8_I++)
       {
-         m_Lines[U8_JBS_NUMBER_LINES].SetValve(false);
+         m_Lines[u8_I].SetValve(false);
       }
     }
   }  
@@ -247,47 +237,39 @@ void C_JBS_FillingSystem::SemiAuto()
     g_Leds.setPixelColor(u8_Index*2+1, u32_LedColor);
   }
 
-  uint8_t LineInUse{max(mu8_NumberOfUsedLines, mu8_CalibratedLine)};
-  for(uint8_t u8_Index{0u}; u8_Index < LineInUse; u8_Index++)
-  {
-    g_Leds.setPixelColor(u8_Index*2, U32_JBS_GREEN_LED);
-  }
-  for(uint8_t u8_Index{LineInUse}; u8_Index < U8_JBS_NUMBER_LINES; u8_Index++)
+  for(uint8_t u8_Index{0U}; u8_Index < U8_JBS_NUMBER_LINES; u8_Index++)
   {
     g_Leds.setPixelColor(u8_Index*2, U32_JBS_ORANGE_LED);
   }
+  uint8_t LineInUse{ mu8_CalibratedLine>0 ? mu8_CalibratedLine : mu8_UsedLineIndex};
+  g_Leds.setPixelColor(LineInUse*2, U32_JBS_GREEN_LED);
 }
 
 void C_JBS_FillingSystem::Auto()
 {
-  if (mu8_NumberOfUsedLines>0U && mu16_FillingCalibrationTicks>0U && CheckBottlesEmtyAndReady(mu8_NumberOfUsedLines) && mu16_FillingState == 0U &&  mu8_CalibratedLine == 0U)
+  if (mu8_CalibratedLine>0U && mu16_FillingCalibrationTicks>0U && CheckBottlesEmtyAndReady(mu8_UsedLineIndex) && mu16_FillingState == 0U &&  mu8_CalibratedLine == 0U)
   {
     mu16_FillingTicks = mu16_FillingCalibrationTicks + (mu16_FilledBottleCounter/5U); // Calibrate ticks to add for lower perssue
     mu16_FillingCounter = 0U;
     mu16_FillingState = 1U;
   }
 
-  if (mu16_FillingState == 1U)
+  if (mu16_FillingState == 1U && mu8_UsedLineIndex>0U)
   {
-    if (mu16_FillingCounter>=mu16_FillingTicks || !CheckBottlesEmtyAndReady(mu8_NumberOfUsedLines))
+    if (mu16_FillingCounter>=mu16_FillingTicks || !CheckBottlesEmtyAndReady(mu8_UsedLineIndex))
     { 
       mu16_FillingCounter=0U;
       mu16_FillingState=0U;
-      for(uint8_t u8_I{0U}; u8_I < mu8_NumberOfUsedLines; u8_I++)
-      {
-        m_Lines[u8_I].SetValve(false);
-        m_Lines[u8_I].SetBottleFull();
-      }
+
+      m_Lines[mu8_UsedLineIndex-1U].SetValve(false);
+      m_Lines[mu8_UsedLineIndex-1U].SetBottleFull();
         
-      mu16_FilledBottleCounter+=mu8_NumberOfUsedLines;
+      mu16_FilledBottleCounter++;
     }
     else
     {
       mu16_FillingCounter++;
-      for(uint8_t u8_I{0U}; u8_I < mu8_NumberOfUsedLines; u8_I++)
-      {
-        m_Lines[u8_I].SetValve(true);
-      }
+        m_Lines[mu8_UsedLineIndex-1U].SetValve(true);
     }
       
       
@@ -295,19 +277,18 @@ void C_JBS_FillingSystem::Auto()
   else
   {
     // Calibration
-    if (mu8_CalibratedLine>0U)                            // IF calibatration active
+    if (mu8_CalibratedLine>0U && mu8_UsedLineIndex>0U)                            // IF calibatration active
     {
       if(!CheckBottlesEmtyAndReady(mu8_CalibratedLine))      // IF button click release
       {
-          for(uint8_t u8_I{0U}; u8_I < mu8_NumberOfUsedLines; u8_I++)
-          {
-            m_Lines[u8_I].SetBottleFull();
-            mu16_FilledBottleCounter+=mu8_NumberOfUsedLines;
-            m_Lines[u8_I].SetValve(false);
-          }
+
+        m_Lines[mu8_UsedLineIndex-1U].SetBottleFull();
+        mu16_FilledBottleCounter++;
+        m_Lines[mu8_UsedLineIndex-1U].SetValve(false);
+
         mu8_CalibratedLine = 0U;                              // Reset Calibrated line
         mu16_ClickingCounter = 0U;                            // Reset Click counter
-        mu8_NumberOfUsedLines = 0U;
+        mu8_UsedLineIndex = 0U;
       }
       else
       {
@@ -319,14 +300,12 @@ void C_JBS_FillingSystem::Auto()
             mu16_FilledBottleCounter = 0U;
             mu16_FillingCalibrationTicks = mu16_ClickingCounter - U32_JBS_CALIBRATION_START_PAUSE_MS/mu16_CyclePeriodMS;
             Serial.println("Used Line:");
-            Serial.println(mu8_NumberOfUsedLines);
+            Serial.println(mu8_UsedLineIndex);
             Serial.println("Calibration ticks:");
             Serial.println(mu16_FillingCalibrationTicks);
-            for(uint8_t u8_I{0U}; u8_I < mu8_NumberOfUsedLines; u8_I++)
-            {
-              m_Lines[u8_I].SetBottleFull();
-              mu16_FilledBottleCounter+=mu8_NumberOfUsedLines;
-            }
+
+            m_Lines[mu8_UsedLineIndex-1U].SetBottleFull();
+            mu16_FilledBottleCounter++;
           }
           else
           {
@@ -335,10 +314,9 @@ void C_JBS_FillingSystem::Auto()
           mu8_CalibratedLine = 0U;                              // Reset Calibrated line
           mu16_ClickingCounter = 0U ;                           // Reset Click counter
           mu16_FillingState = 0U;
-          for(uint8_t u8_I{0U}; u8_I < mu8_NumberOfUsedLines; u8_I++)
-          {
-            m_Lines[u8_I].SetValve(false);
-          }
+        
+          m_Lines[mu8_UsedLineIndex-1U].SetValve(false);
+          
         }
         else
         {
@@ -363,17 +341,14 @@ void C_JBS_FillingSystem::Auto()
 
     if (mu8_CalibratedLine > 0U && mu16_ClickingCounter >= U32_JBS_CALIBRATION_START_PAUSE_MS/mu16_CyclePeriodMS)
     {
-      mu8_NumberOfUsedLines = mu8_CalibratedLine;
-      for(uint8_t u8_I{0U}; u8_I < mu8_NumberOfUsedLines; u8_I++)
-      {
-        m_Lines[u8_I].SetValve(true);
-      }
+      mu8_UsedLineIndex = mu8_CalibratedLine;
+      m_Lines[mu8_UsedLineIndex-1U].SetValve(true);
     }
     else
     {
       for(uint8_t u8_I{0U}; u8_I < U8_JBS_NUMBER_LINES; u8_I++)
       {
-         m_Lines[U8_JBS_NUMBER_LINES].SetValve(false);
+         m_Lines[u8_I].SetValve(false);
       }
     }
   }  
@@ -387,24 +362,22 @@ void C_JBS_FillingSystem::Auto()
     g_Leds.setPixelColor(u8_Index*2+1, u32_LedColor);
   }
 
-  uint8_t LineInUse{max(mu8_NumberOfUsedLines, mu8_CalibratedLine)};
-  for(uint8_t u8_Index{0u}; u8_Index < LineInUse; u8_Index++)
-  {
-    g_Leds.setPixelColor(u8_Index*2, U32_JBS_GREEN_LED);
-  }
-  for(uint8_t u8_Index{LineInUse}; u8_Index < U8_JBS_NUMBER_LINES; u8_Index++)
+  uint8_t LineInUse{ mu8_CalibratedLine>0 ? mu8_CalibratedLine : mu8_UsedLineIndex};
+
+  for(uint8_t u8_Index{0U}; u8_Index < U8_JBS_NUMBER_LINES; u8_Index++)
   {
     g_Leds.setPixelColor(u8_Index*2, U32_JBS_ORANGE_LED);
   }
+  g_Leds.setPixelColor(LineInUse*2, U32_JBS_GREEN_LED);
 }
 
 bool C_JBS_FillingSystem::CheckBottlesEmtyAndReady(const uint8_t u8_UsedLine) const
 {
   bool b_Result{true};
 
-  for(uint8_t u8_I{0U}; u8_I < u8_UsedLine; u8_I++)
+  if(u8_UsedLine>0U)
   {
-    b_Result &= m_Lines[u8_I].GetBottleEmtyAndReady();
+    b_Result &= m_Lines[u8_UsedLine-1U].GetBottleEmtyAndReady();
   }
 
   return b_Result;
@@ -638,6 +611,11 @@ void C_JBS_FillingSystem::WriteOutput()
     {
         m_Lines[u8_Index].WriteOutput();
     }
+}
+
+void C_JBS_FillingSystem::SelectLine()
+{
+
 }
 
 int8_t C_JBS_FillingSystem:: GetBtCalPressed(const uint8_t u8_Line) const
