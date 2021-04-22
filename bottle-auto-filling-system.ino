@@ -24,9 +24,7 @@ uint8_t gu8_Mode{0u};
 //   2 Semi-Auto mode - Filling starts by pressing the pedal  
 //   3 Auto - Filling start automatically when bottle is present
 //   4 Cleaning - Used to clean all 4 valves
-const uint16_t g_CYCLE_TIME_MS {20U};
-unsigned int gMachineMode{1U};   // number of used valve
-unsigned int gu32TimingFilling{20U}; // 20 ms cycle time
+const uint16_t g_CYCLE_TIME_MS {20U};   // 20 ms cycle time
 
 C_JBS_LCD_I2C g_Lcd; //(0x27,16,2);  // set the LCD address to 0x27 for a 16 chars and 2 line display
 C_JBS_LedNeoPixel g_Leds; // Set leds object

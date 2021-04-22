@@ -15,7 +15,8 @@
 #include "C_JBS_Line.h"
 #include "string.h"
 
-#define JBS_NUMBER_LINES 4
+const uint8_t U8_JBS_NUMBER_LINES{4U};                          // 4 lines can be used
+const uint32_t U32_JBS_CALIBRATION_START_PAUSE_MS{3000U};       // 3000ms are waited before calibration
 
 extern C_JBS_LCD_I2C g_Lcd;
 extern C_JBS_LedNeoPixel g_Leds;
@@ -36,7 +37,7 @@ bool mb_BtPedale;
 bool mb_BtPedaleLast;
 bool mb_BtPedaleClick;
 
-C_JBS_Line m_Lines[JBS_NUMBER_LINES];
+C_JBS_Line m_Lines[U8_JBS_NUMBER_LINES];
 C_JBS_LedNeoPixel* mp_Leds;
 
 uint32_t mu32_TimeKeeper;
