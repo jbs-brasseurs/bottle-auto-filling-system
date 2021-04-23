@@ -15,7 +15,7 @@ LiquidCrystal_I2C(0x27u, U8_JBS_LCD_I2C_NUMBER_COL, U8_JBS_LCD_I2C_NUMBER_ROW),
 mau8_BierCharacter{0x06,0x09,0x19,0x19,0x19,0x19,0x0F,0x00},
 
 MAC8_INIT{" Initialisation "},
-MAC8_INIT_ABOUT{"V1.0-2020-11-27 Made in JBS"},
+MAC8_INIT_ABOUT{"V1.1-2021-04-23 Made in JBS"},
 MAC8_INIT_JBS_MESSAGE{"Bon courage     Bon remplissage "},
 MAC8_INIT_STARTUP{"Startup ..."},
 MAC8_BEER{8,0},
