@@ -102,6 +102,24 @@ void C_JBS_LCD_I2C::ClearPrintL2(const char * pc8_Line2)
     print(ac8_Line);
 }
 
+void C_JBS_LCD_I2C::ClearPrintL2Debug(const char * pc8_Line2, const int i16_Value)
+{
+    setCursor(0u, 1u);
+    char ac8_Line[U8_JBS_LCD_I2C_NUMBER_COL];
+    memset(&ac8_Line[0U], 0, U8_JBS_LCD_I2C_NUMBER_COL);
+    uint16_t u16_Line2Size{min(U8_JBS_LCD_I2C_NUMBER_COL,strlen(pc8_Line2))}; 
+    memcpy(ac8_Line, pc8_Line2, u16_Line2Size);
+    String Value{i16_Value};
+    if (U8_JBS_LCD_I2C_NUMBER_COL-u16_Line2Size >= Value.length())
+    {
+        strcat(ac8_Line, Value.c_str());
+    }
+    print(ac8_Line);
+    Serial.println(ac8_Line);
+    Serial.println(Value.c_str());
+    Serial.println(i16_Value);
+}
+
 void C_JBS_LCD_I2C::ClearPrintDebug(const char * pc8_Line1, const int u16_V1, const int u16_V2, const int u16_V3, const int u16_V4)
 {
     clear();

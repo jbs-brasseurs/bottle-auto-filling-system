@@ -1,6 +1,6 @@
 {
     "sketch": "bottle-auto-filling-system.ino",
-    "port": "COM3",
+    "port": "COM4",
     "programmer": "AVRISP mkII",
     "board": "arduino:avr:mega",
     "configuration": "cpu=atmega2560"

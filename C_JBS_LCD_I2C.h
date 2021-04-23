@@ -57,6 +57,7 @@ public:
     void ClearPrint(const char * pc8_Text);
     void ClearPrint2(const char * pc8_Line1, const char * pc8_Line2);
 	void ClearPrintL2(const char * pc8_Line2);
+	void ClearPrintL2Debug(const char * pc8_Line2, const int u16_Value);
     void ClearPrintDebug(const char * pc8_Line1, const int u16_V1, const int u16_V2, const int u16_V3, const int u16_V4);
 protected:
 private:
