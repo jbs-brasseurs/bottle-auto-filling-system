@@ -123,7 +123,7 @@ void C_JBS_FillingSystem::Manual()
 
 void C_JBS_FillingSystem::SemiAuto()
 {
-  if (mu8_UsedLineIndex>0U && mu16_FillingCalibrationTicks>0U && mb_BtPedaleClick && CheckBottlesEmtyAndReady(mu8_UsedLineIndex))
+  if (mu8_UsedLineIndex>0U && mu16_FillingCalibrationTicks>0U && mb_BtPedaleClick && m_Lines[u8_UsedLine-1U].GetBottleEmtyAndReady())
   {
 
     mu16_FillingTicks = mu16_FillingCalibrationTicks + (mu16_FilledBottleCounter/5U); // Calibrate ticks to add for lower perssue
@@ -133,7 +133,7 @@ void C_JBS_FillingSystem::SemiAuto()
 
   if (mu16_FillingState == 1U && mu8_UsedLineIndex > 0U)
   {
-    if (mu16_FillingCounter>=mu16_FillingTicks || !CheckBottlesEmtyAndReady(mu8_UsedLineIndex))
+    if (mu16_FillingCounter>=mu16_FillingTicks || !m_Lines[u8_UsedLine-1U].GetBottleEmtyAndReady()
     { 
       mu16_FillingCounter=0U;
       mu16_FillingState=0U;
@@ -155,7 +155,7 @@ void C_JBS_FillingSystem::SemiAuto()
     // Calibration
     if (mu8_CalibratedLine>0U)                            // IF calibatration active
     {
-      if(!CheckBottlesEmtyAndReady(mu8_CalibratedLine) && mu8_UsedLineIndex > 0U)      // IF button click release
+      if(!m_Lines[mu8_CalibratedLine-1U].GetBottleEmtyAndReady() && mu8_UsedLineIndex > 0U)      // IF button click release
       {
 
         m_Lines[mu8_UsedLineIndex-1U].SetBottleFull();
